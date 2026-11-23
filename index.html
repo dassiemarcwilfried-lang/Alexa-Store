@@ -1,0 +1,1188 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#050914">
+<title>Alexa Store V9</title>
+
+<style>
+:root {
+  --blue:#078bff;
+  --cyan:#00d9ff;
+  --gold:#ffc928;
+  --bg:#050914;
+  --card:#101a2b;
+  --text:#fff;
+  --muted:#9eabc0;
+}
+* {box-sizing:border-box;margin:0;padding:0}
+
+body {
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,sans-serif;
+  padding-bottom:85px;
+}
+
+header {
+  padding:20px 16px;
+  background:linear-gradient(120deg,#06152c,#071c39,#050914);
+  border-bottom:1px solid #153a65;
+}
+
+.brand {display:flex;align-items:center;gap:12px}
+.logo {
+  width:53px;height:53px;border-radius:15px;
+  background:linear-gradient(135deg,#00d9ff,#005bea);
+  display:grid;place-items:center;font-size:25px;
+  box-shadow:0 0 20px #008cff66;
+}
+.brand h1 {font-size:24px}
+.brand h1 span {color:var(--cyan)}
+.version {
+  color:var(--gold);font-size:11px;
+  margin-top:4px;letter-spacing:2px
+}
+
+.hero {
+  margin:18px 15px;padding:25px 18px;border-radius:18px;
+  background:linear-gradient(130deg,#062d65,#075db5,#08152c);
+  border:1px solid #138bff;box-shadow:0 0 25px #007bff22;
+}
+.hero h2 {font-size:27px;margin-bottom:10px}
+.hero h2 span {color:var(--cyan)}
+.hero p {color:#d5e9ff;line-height:1.5;font-size:14px}
+.tag {
+  display:inline-block;margin-top:16px;padding:9px 14px;
+  border-radius:20px;background:var(--gold);
+  color:#101010;font-size:12px;font-weight:bold;
+}
+
+.search {padding:0 15px;margin:20px 0}
+.search input {
+  width:100%;padding:15px;background:#101a2b;color:white;
+  border:1px solid #24517e;border-radius:12px;
+  outline:none;font-size:15px;
+}
+.search input:focus {border-color:var(--cyan)}
+
+nav,.category-filter {
+  display:flex;gap:9px;overflow-x:auto;
+  padding:8px 15px 15px;scrollbar-width:thin;
+}
+nav button,.category-filter button {
+  flex-shrink:0;padding:10px 16px;
+  border:1px solid #24436a;border-radius:22px;
+  color:white;background:#101a2b;cursor:pointer;
+}
+nav button.active,.category-filter button.active {
+  background:#087fff;border-color:var(--cyan);
+}
+
+.category-heading {
+  padding:4px 15px 0;color:var(--muted);
+  font-size:11px;letter-spacing:1px;
+}
+.section {padding:10px 15px}
+.section-title {
+  display:flex;align-items:center;
+  justify-content:space-between;margin:13px 0;
+}
+.section-title h2 {font-size:19px}
+.section-title small {color:var(--cyan)}
+
+.apps {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+
+.app {
+  background:var(--card);border:1px solid #1c3655;
+  border-radius:14px;padding:13px;min-width:0;
+  transition:.2s;cursor:pointer;
+}
+.app:active {transform:scale(.97)}
+
+.app-icon {
+  width:65px;height:65px;border-radius:16px;
+  overflow:hidden;margin-bottom:8px;background:#142944;
+  border:1px solid #24517e;display:grid;place-items:center;
+}
+.app-icon img {
+  width:100%;height:100%;object-fit:contain;padding:3px;
+}
+.fallback {
+  display:none;font-size:25px;font-weight:bold;color:var(--cyan);
+}
+
+.app-category {
+  display:inline-block;color:var(--cyan);
+  background:rgba(0,217,255,.10);
+  border:1px solid rgba(0,217,255,.25);
+  border-radius:20px;padding:5px 10px;
+  font-size:11px;margin:5px 0 8px;
+}
+.app h3 {font-size:15px;margin-bottom:6px}
+.app p {
+  font-size:12px;color:var(--muted);
+  margin-bottom:12px;line-height:1.4;
+}
+.app-rating {color:#ffd166;font-size:13px;margin:10px 0}
+.price {
+  color:var(--gold);font-size:12px;
+  font-weight:bold;margin-bottom:12px;
+}
+.free {color:#00e99a}
+
+.details-button {
+  display:block;text-align:center;padding:11px 5px;
+  background:linear-gradient(100deg,#0069e8,#00aaff);
+  border-radius:9px;color:white;font-size:12px;
+  font-weight:bold;margin-top:10px;
+}
+.app.premium .details-button {
+  background:linear-gradient(100deg,#a66a00,#ffd044);
+  color:#111;
+}
+
+.empty {
+  display:none;color:var(--muted);
+  text-align:center;padding:25px;
+}
+.ad-slot {
+  margin:20px 15px;min-height:75px;
+  border:1px dashed #315276;border-radius:12px;
+  display:grid;place-items:center;color:#8297b3;
+  font-size:12px;text-align:center;
+}
+footer {
+  text-align:center;color:#72839c;
+  padding:25px;font-size:12px;
+}
+.bottom {
+  position:fixed;bottom:0;left:0;right:0;
+  background:#080f1e;border-top:1px solid #19395e;
+  display:flex;justify-content:space-around;
+  padding:13px 5px;z-index:10;
+}
+.bottom a {
+  color:#a9bad0;text-decoration:none;
+  text-align:center;font-size:11px;
+}
+.bottom span {
+  display:block;font-size:19px;margin-bottom:4px;
+}
+.bottom a:hover {color:var(--cyan)}
+
+/* APP DETAILS POPUP */
+
+.details-overlay {
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.88);
+  z-index:100;
+  overflow-y:auto;
+  padding:18px 12px;
+}
+
+.details-overlay.show {display:block}
+
+.details-box {
+  max-width:600px;
+  margin:15px auto;
+  background:#0c1729;
+  border:1px solid #1763a3;
+  border-radius:18px;
+  overflow:hidden;
+  box-shadow:0 0 35px #007bff33;
+}
+
+.details-top {
+  padding:20px;
+  background:linear-gradient(130deg,#062d65,#08152c);
+  position:relative;
+}
+
+.close-details {
+  position:absolute;
+  top:12px;
+  right:12px;
+  width:35px;
+  height:35px;
+  border:1px solid #4776a5;
+  border-radius:50%;
+  background:#101a2b;
+  color:white;
+  font-size:22px;
+  cursor:pointer;
+}
+
+.details-heading {
+  display:flex;
+  align-items:center;
+  gap:15px;
+  padding-right:35px;
+}
+
+.details-icon {
+  width:85px;
+  height:85px;
+  flex-shrink:0;
+  border-radius:19px;
+  background:#142944;
+  border:1px solid #2788d7;
+  overflow:hidden;
+  display:grid;
+  place-items:center;
+  font-size:30px;
+  color:var(--cyan);
+}
+
+.details-icon img {
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  padding:4px;
+}
+
+.details-heading h2 {
+  font-size:21px;
+  margin-bottom:7px;
+}
+.details-heading p {
+  color:#c2d7ee;
+  font-size:13px;
+}
+
+.details-body {padding:20px}
+
+.details-body h3 {
+  color:var(--cyan);
+  font-size:15px;
+  margin:18px 0 9px;
+}
+
+.details-description {
+  color:#c0cadd;
+  font-size:14px;
+  line-height:1.7;
+  white-space:pre-wrap;
+}
+
+.details-info {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  margin-top:17px;
+}
+
+.info-item {
+  background:#111f34;
+  border:1px solid #203c5e;
+  border-radius:10px;
+  padding:12px;
+  min-width:0;
+}
+
+.info-item small {
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  margin-bottom:6px;
+}
+
+.info-item strong {
+  font-size:13px;
+  overflow-wrap:anywhere;
+}
+
+.feature-list {
+  color:#c0cadd;
+  font-size:13px;
+  line-height:1.9;
+  padding-left:20px;
+}
+
+.screenshots {
+  display:flex;
+  gap:10px;
+  overflow-x:auto;
+  padding:5px 0 12px;
+}
+
+.screenshots img {
+  width:145px;
+  height:230px;
+  flex-shrink:0;
+  object-fit:cover;
+  border-radius:10px;
+  border:1px solid #315276;
+}
+
+.details-download {
+  display:block;
+  text-align:center;
+  text-decoration:none;
+  padding:15px;
+  margin-top:22px;
+  border-radius:11px;
+  background:linear-gradient(100deg,#0069e8,#00aaff);
+  color:white;
+  font-size:14px;
+  font-weight:bold;
+}
+
+.details-download.paid {
+  background:linear-gradient(100deg,#a66a00,#ffd044);
+  color:#111;
+}
+
+.details-note {
+  text-align:center;
+  color:#8297b3;
+  font-size:11px;
+  margin-top:12px;
+  line-height:1.5;
+}
+
+@media(min-width:650px) {
+  .apps {grid-template-columns:repeat(4,minmax(0,1fr))}
+  .section,.hero,.search {
+    max-width:1100px;
+    margin-left:auto;
+    margin-right:auto;
+  }
+}
+.app-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* ALEXA STORE V9 HYBRID EXPERIENCE */
+.v9-top{position:sticky;top:0;z-index:20;background:#071326ee;backdrop-filter:blur(14px);border-bottom:1px solid #183b60;padding:13px 16px}
+.v9-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.v9-brand{display:flex;align-items:center;gap:10px}.v9-brand .logo{width:43px;height:43px;font-size:20px}
+.v9-search-launch{border:1px solid #24517e;background:#101e33;color:#9eabc0;border-radius:13px;padding:12px 14px;text-align:left;flex:1;max-width:440px}
+.page{display:none}.page.active{display:block}
+.v9-hero{margin:18px 15px;padding:25px 20px;border-radius:22px;background:radial-gradient(circle at 85% 20%,#00d9ff55,transparent 34%),linear-gradient(125deg,#062d65,#075db5 55%,#08152c);border:1px solid #168bff;min-height:190px;display:flex;flex-direction:column;justify-content:center}
+.v9-hero .eyebrow{font-size:11px;letter-spacing:2px;color:#a9eaff;font-weight:bold;margin-bottom:10px}
+.v9-hero h2{font-size:29px;line-height:1.15;margin-bottom:10px}.v9-hero p{color:#d5e9ff;line-height:1.5;max-width:520px;font-size:14px}
+.v9-pills{display:flex;gap:9px;overflow:auto;padding:4px 15px 12px}
+.v9-pills button{white-space:nowrap;border:1px solid #24436a;background:#101a2b;color:#d9e9ff;border-radius:20px;padding:9px 14px}
+.v9-pills button.active{background:#087fff;border-color:#00d9ff}
+.page-title{padding:22px 16px 5px}.page-title h2{font-size:25px}.page-title p{color:#9eabc0;font-size:13px;margin-top:6px}
+.v9-search-wrap{padding:18px 15px}.v9-search-wrap input{width:100%;padding:16px;border:1px solid #24517e;border-radius:14px;background:#101a2b;color:white;font-size:16px;outline:none}
+.v9-search-wrap input:focus{border-color:#00d9ff}
+.v9-bottom{position:fixed;bottom:0;left:0;right:0;z-index:30;display:flex;justify-content:space-around;background:#080f1ef5;border-top:1px solid #19395e;padding:9px 4px calc(9px + env(safe-area-inset-bottom))}
+.v9-bottom button{border:0;background:none;color:#9eabc0;font-size:11px;min-width:54px;padding:3px}
+.v9-bottom button span{display:block;font-size:20px;margin-bottom:3px}.v9-bottom button.active{color:#00d9ff}
+.section{max-width:1150px;margin:0 auto}
+.v9-empty{display:none;text-align:center;color:#9eabc0;padding:35px 15px}
+@media(min-width:700px){.v9-hero{max-width:1120px;margin:22px auto}.v9-pills{max-width:1150px;margin:auto}.apps{grid-template-columns:repeat(5,minmax(0,1fr))}}
+
+</style>
+
+<style id="alexa-cookie-consent-css">
+#alexa-cookie-banner,#alexa-cookie-modal{font-family:Arial,sans-serif}
+#alexa-cookie-banner{position:fixed;z-index:99990;left:16px;right:16px;bottom:16px;max-width:760px;margin:auto;background:#101a2b;color:#fff;border:1px solid #1b4268;border-radius:16px;box-shadow:0 14px 45px #0009;padding:18px}
+#alexa-cookie-banner h2,#alexa-cookie-modal h2{font-size:18px;margin:0 0 8px;color:#fff}
+#alexa-cookie-banner p,#alexa-cookie-modal p{font-size:13px;line-height:1.55;color:#c1cee0;margin:0 0 13px}
+.alexa-cookie-actions{display:flex;gap:9px;flex-wrap:wrap}
+.alexa-cookie-btn{border:1px solid #315274;border-radius:9px;padding:10px 14px;background:#14243a;color:#fff;font-weight:700;font-size:13px;cursor:pointer}
+.alexa-cookie-btn.primary{background:linear-gradient(90deg,#078bff,#00bfe9);border:0;color:#03101c}
+.alexa-cookie-btn:hover{filter:brightness(1.12)}
+#alexa-cookie-modal{display:none;position:fixed;inset:0;z-index:99999;background:#000b;padding:18px;align-items:center;justify-content:center}
+#alexa-cookie-modal.open{display:flex}
+.alexa-cookie-panel{width:min(100%,520px);max-height:90vh;overflow:auto;background:#0b1424;border:1px solid #245078;border-radius:16px;padding:20px;box-shadow:0 18px 55px #000b}
+.alexa-cookie-row{display:flex;justify-content:space-between;gap:16px;align-items:center;padding:13px 0;border-top:1px solid #20334c}
+.alexa-cookie-row strong{display:block;color:#fff;font-size:14px;margin-bottom:3px}
+.alexa-cookie-row small{display:block;color:#aabbd0;font-size:12px;line-height:1.45}
+.alexa-cookie-row input{width:19px;height:19px;accent-color:#00cfff;flex:0 0 auto}
+.alexa-cookie-note{font-size:11px!important;color:#91a4bc!important;margin-top:12px!important}
+@media(max-width:520px){#alexa-cookie-banner{left:10px;right:10px;bottom:10px;padding:15px}.alexa-cookie-actions .alexa-cookie-btn{flex:1 1 42%;padding:10px 8px}}
+</style>
+
+</head>
+
+<body>
+<header class="v9-top">
+ <div class="v9-head">
+  <div class="v9-brand"><div class="logo">AS</div><div><h1>Alexa <span style="color:#00d9ff">Store</span></h1><div class="version">PREMIUM MARKETPLACE • V9</div></div></div>
+  <button class="v9-search-launch" onclick="goPage('search')">⌕ &nbsp; Search apps and games</button>
+ </div>
+</header>
+
+<main>
+ <section class="page active" id="homePage">
+  <div class="v9-hero"><div class="eyebrow">DISCOVER YOUR NEXT FAVOURITE</div><h2>Welcome to <span style="color:#00d9ff">Alexa Store</span></h2><p>Explore apps, discover games and find something brilliant for your Android device.</p></div>
+  <div class="ad-slot">Advertisement space<br><small>Approved advertising can be added here later.</small></div>
+  <div class="v9-pills" id="homeCategories">
+   <button class="active" onclick="setHomeCategory('All',this)">For you</button><button onclick="setHomeCategory('Communication',this)">Communication</button><button onclick="setHomeCategory('Tools',this)">Tools</button><button onclick="setHomeCategory('Music',this)">Music</button><button onclick="setHomeCategory('Video',this)">Video</button><button onclick="setHomeCategory('Design',this)">Design</button>
+  </div>
+  <div class="section"><div class="section-title"><h2>Featured & trending</h2><small>EXPLORE</small></div><div class="apps" id="homeApps"></div></div>
+ </section>
+ <section class="page" id="gamesPage">
+  <div class="page-title"><h2 style="color:#00d9ff">Games</h2><p>Find your next adventure, challenge or favourite game.</p></div>
+  <div class="v9-hero" style="background:radial-gradient(circle at 85% 20%,#00d9ff55,transparent 34%),linear-gradient(125deg,#09234c,#123e78,#10172c)"><div class="eyebrow">GAME ON</div><h2>Play something <span style="color:#00d9ff">great.</span></h2><p>Explore games available in the Alexa Store collection.</p></div>
+  <div class="ad-slot">Advertisement space<br><small>Approved advertising can be added here later.</small></div>
+  <div class="section"><div class="section-title"><h2>All games</h2><small>GAMES</small></div><div class="apps" id="gameApps"></div></div>
+ </section>
+ <section class="page" id="searchPage">
+  <div class="page-title"><h2>Search</h2><p>Search apps and games in Alexa Store.</p></div>
+  <div class="v9-hero" style="background:radial-gradient(circle at 85% 20%,#00d9ff55,transparent 34%),linear-gradient(125deg,#09234c,#123e78,#10172c)"><div class="eyebrow">ALEXA STORE</div><h2>Search Your Desired <span style="color:#00d9ff">Application.</span></h2><p>Explore apps available in the Alexa Store collection.</p></div>
+  <div class="ad-slot">Advertisement space<br><small>Approved advertising can be added here later.</small></div>
+  <div class="v9-search-wrap"><input id="search" type="search" placeholder="Search apps, games, categories..." oninput="displayApps()" autocomplete="off"></div>
+  <div class="v9-pills"><button class="active" onclick="setSearchType('all',this)">All</button><button onclick="setSearchType('apps',this)">Apps</button><button onclick="setSearchType('games',this)">Games</button></div>
+  <div class="section"><div class="apps" id="searchApps"></div><div class="v9-empty" id="empty">No results found. Try another search.</div></div>
+ </section>
+ <section class="page" id="appsPage">
+  <div class="page-title"><h2 style="color:#00d9ff">Apps</h2><p>Useful tools, creativity, communication and entertainment.</p></div>
+  <div class="v9-hero" style="background:radial-gradient(circle at 85% 20%,#00d9ff55,transparent 34%),linear-gradient(125deg,#09234c,#123e78,#10172c)"><div class="eyebrow">ALEXA STORE</div><h2>Best apps for you to <span style="color:#00d9ff">Download.</span></h2><p>Explore Apps available in the Alexa Store collection.</p></div>
+  <div class="ad-slot">Advertisement space<br><small>Approved advertising can be added here later.</small></div>
+  <div class="section"><div class="section-title"><h2>Explore apps</h2><small>APPLICATIONS</small></div><div class="apps" id="allApps"></div></div>
+ </section>
+ <section class="page" id="premiumPage">
+  <div class="page-title"><h2 style="color:#ffc928">Premium</h2><p>Discover selected premium experiences.</p></div>
+  <div class="v9-hero" style="background:linear-gradient(125deg,#382500,#8c5a00,#171321);border-color:#ffc928"><div class="eyebrow" style="color:#ffe5a0">ALEXA STORE EXCLUSIVE</div><h2>Premium <span style="color:#ffc928">collection</span></h2><p>Explore paid and specially selected premium apps and games.</p></div>
+  <div class="ad-slot">Advertisement space<br><small>Approved advertising can be added here later.</small></div>
+  <div class="section"><div class="apps" id="premiumApps"></div></div>
+ </section>
+</main>
+<footer>
+ <h3 style="color:#00cfff;margin-bottom:8px">Alexa Store V9</h3>
+ Download • Explore • Enjoy<br><br>
+ <div class="footer-links" style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin:0 auto 16px">
+  <a href="about.html" style="color:#00d9ff;text-decoration:none">About Us</a>
+  <a href="contact.html" style="color:#00d9ff;text-decoration:none">Contact Us</a>
+  <a href="privacy.html" style="color:#00d9ff;text-decoration:none">Privacy Policy</a>
+  <a href="terms.html" style="color:#00d9ff;text-decoration:none">Terms &amp; Conditions</a>
+  <a href="#" onclick="window.AlexaConsent&amp;&amp;window.AlexaConsent.openSettings();return false" style="color:#00d9ff;text-decoration:none">Cookie Settings</a>
+ </div>
+ © 2026 Alexa Store. All rights reserved.
+</footer>
+<nav class="v9-bottom">
+ <button class="active" data-page="home" onclick="goPage('home')"><span>⌂</span>Home</button>
+ <button data-page="games" onclick="goPage('games')"><span>🎮</span>Games</button>
+ <button data-page="search" onclick="goPage('search')"><span>⌕</span>Search</button>
+ <button data-page="apps" onclick="goPage('apps')"><span>▦</span>Apps</button>
+ <button data-page="premium" onclick="goPage('premium')"><span>★</span>Premium</button>
+</nav>
+
+<!-- APP DETAILS WINDOW -->
+
+<div class="details-overlay" id="detailsOverlay"
+  onclick="closeDetailsOutside(event)">
+
+  <div class="details-box">
+
+    <div class="details-top">
+      <button class="close-details"
+        onclick="closeDetails()">×</button>
+
+      <div class="details-heading">
+        <div class="details-icon" id="detailIcon"></div>
+        <div>
+          <h2 id="detailName">App name</h2>
+          <p id="detailCategory">Category</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="details-body">
+
+      <div class="details-info">
+        <div class="info-item">
+          <small>PRICE</small>
+          <strong id="detailPrice">FREE</strong>
+        </div>
+        <div class="info-item">
+          <small>RATING</small>
+          <strong id="detailRating">Not yet rated</strong>
+        </div>
+        <div class="info-item">
+          <small>VERSION</small>
+          <strong id="detailVersion">Not provided</strong>
+        </div>
+        <div class="info-item">
+          <small>APP SIZE</small>
+          <strong id="detailSize">Not provided</strong>
+        </div>
+        <div class="info-item">
+          <small>DEVELOPER</small>
+          <strong id="detailDeveloper">Not provided</strong>
+        </div>
+        <div class="info-item">
+          <small>APP TYPE</small>
+          <strong id="detailType">Android app</strong>
+        </div>
+      </div>
+
+      <h3>About this app</h3>
+      <p class="details-description" id="detailDescription"></p>
+
+      <div id="featuresSection">
+        <h3>Features</h3>
+        <ul class="feature-list" id="detailFeatures"></ul>
+      </div>
+
+      <div id="screenshotsSection">
+        <h3>Screenshots</h3>
+        <div class="screenshots" id="detailScreenshots"></div>
+      </div>
+
+      <a href="#" id="detailDownload"
+        class="details-download"
+        target="_blank"
+        rel="noopener noreferrer">
+        OPEN APP PAGE
+      </a>
+
+      <p class="details-note">
+        App information is supplied by the Alexa Store administrator.
+        Check the app details before downloading.
+      </p>
+
+    </div>
+  </div>
+</div>
+
+<script>
+
+const defaultApps = [
+  {
+    name:"WhatsApp",
+    image:"images/WhatsApp.png",
+    category:"Communication",
+    description:"Messaging and communication",
+    fullDescription:"Stay connected with friends and family through messaging, voice calls and video calls.",
+    version:"up to date",
+    size:"80 MB",
+    developer:"WhatsApp LLC",
+    features:["Messaging","Voice and video calls","Group chats"],
+    type:"free",
+    trending:true,
+    premium:false,
+    url:"https://play.google.com/store/search?q=WhatsApp&c=apps"
+  },
+  {
+    name:"Telegram",
+    image:"images/Telegram.png",
+    category:"Communication",
+    description:"Messaging and communities",
+    fullDescription:"Explore messaging, group conversations and channels with Telegram.",
+    version:"up to date",
+    size:"35 MB",
+    developer:"Telegram FZ-LLC",
+    features:["Messaging","Groups and channels","File sharing"],
+    type:"free",
+    trending:true,
+    premium:false,
+    url:"https://play.google.com/store/search?q=Telegram&c=apps"
+  },
+  {
+    name:"Google Maps",
+    image:"images/Maps.png",
+    category:"Maps",
+    description:"Maps and navigation",
+    fullDescription:"Explore places, find locations and discover navigation features.",
+    version:"up to date",
+    size:"44 MB",
+    developer:"Google LLC",
+    features:["Maps","Navigation","Place discovery"],
+    type:"free",
+    trending:true,
+    premium:false,
+    url:"https://play.google.com/store/search?q=Google+Maps&c=apps"
+  },
+  {
+    name:"YouTube",
+    image:"images/YouTube.png",
+    category:"Video",
+    description:"Video streaming",
+    fullDescription:"Discover videos, creators and entertainment on YouTube.",
+    version:"up to date",
+    size:"56 MB",
+    developer:"Google LLC",
+    features:["Watch videos","Discover creators","Create playlists"],
+    type:"free",
+    trending:true,
+    premium:false,
+    url:"https://play.google.com/store/search?q=YouTube&c=apps"
+  },
+  {
+    name:"Music Player",
+    image:"images/Music.png",
+    category:"Music",
+    description:"Music and audio player",
+    fullDescription:"Explore music player apps for enjoying your favourite audio.",
+    version:"up to date",
+    size:"29 MB",
+    developer:"Not provided",
+    features:["Music playback","Audio library"],
+    type:"free",
+    trending:false,
+    premium:false,
+    url:"https://play.google.com/store/search?q=music+player&c=apps"
+  },
+  {
+    name:"Canva",
+    image:"images/Canva.png",
+    category:"Design",
+    description:"Graphic design and creativity",
+    fullDescription:"Explore graphic design tools for creating presentations, posters and other designs.",
+    version:"up to date",
+    size:"42 MB",
+    developer:"Canva",
+    features:["Graphic design","Templates","Creative projects"],
+    type:"free",
+    trending:true,
+    premium:false,
+    url:"https://play.google.com/store/search?q=Canva&c=apps"
+  },
+  {
+    name:"VLC",
+    image:"images/VLC.png",
+    category:"Video",
+    description:"Video and music player",
+    fullDescription:"Explore VLC media player for video and audio playback.",
+    version:"up to date",
+    size:"34 MB",
+    developer:"VideoLAN",
+    features:["Video playback","Audio playback","Media support"],
+    type:"free",
+    trending:false,
+    premium:false,
+    url:"https://play.google.com/store/search?q=VLC&c=apps"
+  },
+  {
+    name:"Minecraft",
+    image:"images/Minecraft.png",
+    category:"Games",
+    description:"Premium gaming experience",
+    fullDescription:"Explore Minecraft, a creative game built around exploration and building.",
+    version:"up to date",
+    size:"642 MB",
+    developer:"Mojang",
+    features:["Creative building","Exploration","Adventure"],
+    type:"paid",
+    trending:true,
+    premium:true,
+    url:"https://play.google.com/store/search?q=Minecraft&c=apps"
+  },
+  {
+    name:"Security",
+    image:"images/Security.png",
+    category:"Tools",
+    description:"Security applications",
+    fullDescription:"Explore apps designed to help with device security and protection.",
+    version:"up to date",
+    size:"40 MB",
+    developer:"Various developers",
+    features:["Explore security apps","Device tools"],
+    type:"free",
+    trending:false,
+    premium:false,
+    url:"https://play.google.com/store/search?q=security+apps&c=apps"
+  },
+  {
+    name:"Camera",
+    image:"images/Camera.png",
+    category:"Tools",
+    description:"Camera applications",
+    fullDescription:"Discover camera apps and tools for photography.",
+    version:"up to date",
+    size:"19 MB",
+    developer:"Various developers",
+    features:["Photography","Camera tools"],
+    type:"free",
+    trending:false,
+    premium:false,
+    url:"https://play.google.com/store/search?q=camera+apps&c=apps"
+  },
+  {
+    name:"File Manager",
+    image:"images/File_Manager.png",
+    category:"Tools",
+    description:"Manage your files",
+    fullDescription:"Explore file manager apps for organising files and folders on your device.",
+    version:"up to date",
+    size:"1.9 MB",
+    developer:"Various developers",
+    features:["File organisation","Folder management"],
+    type:"free",
+    trending:false,
+    premium:false,
+    url:"https://play.google.com/store/search?q=file+manager&c=apps"
+  }
+];
+
+/* ADMIN DASHBOARD CONNECTION */
+
+function loadSavedApps() {
+  try {
+    const value = JSON.parse(
+      localStorage.getItem("alexaAdminApps") || "[]"
+    );
+    return Array.isArray(value) ? value : [];
+  } catch(error) {
+    console.warn("Could not read saved admin apps:",error);
+    return [];
+  }
+}
+
+let apps = [...defaultApps,...loadSavedApps()];
+let currentSection = "all";
+let selectedCategory = "All";
+
+/* SECURITY AND DISPLAY HELPERS */
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g,char => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  })[char]);
+}
+
+function safeLink(value) {
+  const url = String(value || "").trim();
+  return /^https?:\/\//i.test(url) ? url : "#";
+}
+
+
+function safeImage(value) {
+  const image = String(value || "").trim();
+
+  if (!image) return "";
+
+  // Accept uploaded Base64 images
+  if (
+    /^data:image\/(png|jpeg|jpg|webp|gif);base64,/i.test(image)
+  ) {
+    return image;
+  }
+
+  // Accept online image links
+  if (/^https?:\/\//i.test(image)) {
+    return image;
+  }
+
+  // Accept local image files
+  if (/^[a-zA-Z0-9_./ -]+\.(png|jpg|jpeg|webp|gif)$/i.test(image)) {
+    return image;
+  }
+
+  return "";
+}
+
+
+function categoryFor(app) {
+  if(app.category) return String(app.category);
+
+  const text = `${app.name || ""} ${app.description || ""}`.toLowerCase();
+
+  if(/game|gaming|minecraft/.test(text)) return "Games";
+  if(/music|audio|poweramp/.test(text)) return "Music";
+  if(/video|movie|vlc|player/.test(text)) return "Video";
+  if(/map|navigation/.test(text)) return "Maps";
+  if(/design|canva|photo|graphic/.test(text)) return "Design";
+  if(/message|chat|whatsapp|telegram/.test(text)) return "Communication";
+  if(/education|learn|course|school/.test(text)) return "Education";
+
+  return "Tools";
+}
+
+function appRating(app) {
+  const rating = Number(app.rating);
+
+  if(Number.isFinite(rating) && rating > 0 && rating <= 5) {
+    return "⭐ " + rating.toFixed(1) + " / 5";
+  }
+
+  return "Best used application";
+}
+
+function appPrice(app) {
+  if(app.type !== "paid") return "FREE";
+const value = Number(app.price);
+
+  if(Number.isFinite(value) && app.price !== "" && app.price != null) {
+    return value.toLocaleString() + " FCFA";
+  }
+
+  return "CHECK PRICE";
+}
+
+/* CREATE APP CARDS */
+
+function createCard(app,index) {
+  const isPaid = app.type === "paid";
+  const image = safeImage(app.icon || app.image);
+  const name = String(app.name || "App");
+  const category = categoryFor(app);
+  const description = String(app.description || "Explore this app.");
+  const premium = !!app.premium;
+
+  return `
+    <div class="app ${premium ? "premium" : ""}"
+      onclick="openDetails(${index})">
+
+      <div class="app-icon">
+        <img src="${escapeHTML(image)}"
+          alt="${escapeHTML(name)}"
+          style="${image ? "" : "display:none"}"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">
+
+        <span class="fallback"
+          style="display:${image ? "none" : "grid"}">
+          ${escapeHTML(name.charAt(0).toUpperCase())}
+        </span>
+      </div>
+
+      <div class="app-category">${escapeHTML(category)}</div>
+
+      <h3>${escapeHTML(name)}</h3>
+
+      <p>${escapeHTML(description)}</p>
+
+      <div class="app-rating">
+        ${escapeHTML(appRating(app))}
+      </div>
+
+      <div class="price ${isPaid ? "" : "free"}">
+        ${isPaid ? "◆ " + escapeHTML(appPrice(app)) : "✓ FREE"}
+      </div>
+
+      <div class="details-button">
+        VIEW DETAILS
+      </div>
+
+    </div>`;
+}
+
+/* V9 PAGE NAVIGATION AND FILTERING */
+let activePage = "home";
+let homeCategory = "All";
+let searchType = "all";
+
+function goPage(page){
+ activePage=page;
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ const target=document.getElementById(page+"Page");
+ if(target) target.classList.add("active");
+ document.querySelectorAll(".v9-bottom button").forEach(btn=>btn.classList.toggle("active",btn.dataset.page===page));
+ if(page==="search") setTimeout(()=>document.getElementById("search").focus(),80);
+ displayApps();
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+function setHomeCategory(category,button){
+ homeCategory=category;
+ document.querySelectorAll("#homeCategories button").forEach(b=>b.classList.remove("active"));
+ button.classList.add("active"); displayApps();
+}
+function setSearchType(type,button){
+ searchType=type;
+ button.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
+ button.classList.add("active"); displayApps();
+}
+function displayApps(){
+ const query=(document.getElementById("search")?.value||"").toLowerCase().trim();
+ const filtered=apps.filter(app=>{
+  const cat=categoryFor(app);
+  const text=`${app.name||""} ${app.description||""} ${app.fullDescription||""} ${cat} ${app.developer||""}`.toLowerCase();
+  return text.includes(query);
+ });
+ const put=(id,list)=>{const el=document.getElementById(id);if(el)el.innerHTML=list.map(app=>createCard(app,apps.indexOf(app))).join("");};
+ if(activePage==="home"){
+  put("homeApps",filtered.filter(a=>(!a.trending || a.trending) && (homeCategory==="All" || categoryFor(a).toLowerCase()===homeCategory.toLowerCase())).slice(0,12));
+ }
+ if(activePage==="games") put("gameApps",filtered.filter(a=>categoryFor(a).toLowerCase()==="games"));
+ if(activePage==="apps") put("allApps",filtered.filter(a=>categoryFor(a).toLowerCase()!=="games"));
+ if(activePage==="premium") put("premiumApps",filtered.filter(a=>a.premium || a.type==="paid"));
+ if(activePage==="search"){
+  const results=filtered.filter(a=>searchType==="all" || (searchType==="games" ? categoryFor(a).toLowerCase()==="games" : categoryFor(a).toLowerCase()!=="games"));
+  put("searchApps",results);
+  document.getElementById("empty").style.display=results.length?"none":"block";
+ }
+}
+/* APP DETAILS POPUP */
+
+function openDetails(index) {
+  const app = apps[index];
+
+  if(!app) return;
+
+  const name = String(app.name || "App");
+  const image = safeImage(app.icon || app.image);
+  const isPaid = app.type === "paid";
+
+  const iconContainer = document.getElementById("detailIcon");
+
+  if(image) {
+    iconContainer.innerHTML = `
+      <img src="${escapeHTML(image)}"
+        alt="${escapeHTML(name)}"
+        onerror="this.style.display='none';this.parentElement.textContent='${escapeHTML(name.charAt(0))}'">
+    `;
+  } else {
+    iconContainer.textContent = name.charAt(0).toUpperCase();
+  }
+
+  document.getElementById("detailName").textContent = name;
+
+  document.getElementById("detailCategory").textContent =
+    categoryFor(app);
+
+  document.getElementById("detailPrice").textContent =
+    appPrice(app);
+
+  document.getElementById("detailRating").textContent =
+    appRating(app);
+
+  document.getElementById("detailVersion").textContent =
+    app.version || "Not provided";
+
+  document.getElementById("detailSize").textContent =
+    app.size || "Not provided";
+
+  document.getElementById("detailDeveloper").textContent =
+    app.developer || "Not provided";
+
+  document.getElementById("detailType").textContent =
+    isPaid ? "Paid Android app" : "Free Android app";
+
+  document.getElementById("detailDescription").textContent =
+    app.fullDescription || app.description || "No description provided yet.";
+/* FEATURES */
+
+  const features = document.getElementById("detailFeatures");
+  const featuresSection = document.getElementById("featuresSection");
+
+  const featureArray = Array.isArray(app.features)
+    ? app.features
+    : [];
+
+  if(featureArray.length) {
+    features.innerHTML = featureArray.map(feature =>
+      `<li>${escapeHTML(feature)}</li>`
+    ).join("");
+
+    featuresSection.style.display = "";
+  } else {
+    features.innerHTML = "";
+    featuresSection.style.display = "none";
+  }
+  /* SCREENSHOTS */
+
+  const screenshots = document.getElementById("detailScreenshots");
+  const screenshotsSection = document.getElementById("screenshotsSection");
+
+  const screenshotArray = Array.isArray(app.screenshots)
+    ? app.screenshots
+    : [];
+
+  const validScreenshots = screenshotArray
+    .map(safeImage)
+    .filter(Boolean);
+
+  if(validScreenshots.length) {
+    screenshots.innerHTML = validScreenshots.map((src,i) => `
+      <img src="${escapeHTML(src)}"
+        alt="${escapeHTML(name)} screenshot ${i + 1}"
+        loading="lazy">
+    `).join("");
+
+    screenshotsSection.style.display = "";
+  } else {
+    screenshots.innerHTML = "";
+    screenshotsSection.style.display = "none";
+  }
+  /* DOWNLOAD LINK */
+
+  const downloadButton = document.getElementById("detailDownload");
+
+  const destination = safeLink(
+    app.url || app.downloadUrl || app.download
+  );
+
+  downloadButton.href = destination;
+
+  downloadButton.classList.toggle("paid",isPaid);
+
+  downloadButton.textContent = destination === "#"
+    ? "LINK NOT AVAILABLE"
+    : isPaid ? "VIEW APP PRICE" : "DOWNLOAD APP FROM PAGE";
+
+  downloadButton.style.opacity =
+    destination === "#" ? ".5" : "1";
+
+  document.getElementById("detailsOverlay")
+    .classList.add("show");
+
+  document.body.style.overflow = "hidden";
+}
+
+function closeDetails() {
+  document.getElementById("detailsOverlay")
+    .classList.remove("show");
+
+  document.body.style.overflow = "";
+}
+
+function closeDetailsOutside(event) {
+  if(event.target.id === "detailsOverlay") {
+    closeDetails();
+  }
+}
+/* KEYBOARD SUPPORT */
+
+document.addEventListener("keydown",function(event) {
+  if(event.key === "Escape") {
+    closeDetails();
+  }
+});
+
+/* REFRESH ADMIN APPS WHEN RETURNING TO STORE */
+
+window.addEventListener("focus",function() {
+  apps = [...defaultApps,...loadSavedApps()];
+  displayApps();
+});
+
+/* INITIALIZE STORE */
+
+displayApps();
+
+</script>
+
+<div id="alexa-cookie-banner" role="dialog" aria-label="Cookie preferences" aria-live="polite" hidden>
+  <h2>🍪 Your privacy matters</h2>
+  <p>Alexa Store uses essential storage to make the website work. With your permission, optional analytics and advertising storage may also be used. You can accept all, reject optional cookies, or choose your preferences. Read our <a href="privacy.html" style="color:#00d9ff">Privacy Policy</a>.</p>
+  <div class="alexa-cookie-actions">
+    <button class="alexa-cookie-btn primary" type="button" id="alexa-cookie-accept">Accept All</button>
+    <button class="alexa-cookie-btn" type="button" id="alexa-cookie-reject">Reject Optional</button>
+    <button class="alexa-cookie-btn" type="button" id="alexa-cookie-manage">Manage Preferences</button>
+  </div>
+</div>
+
+<div id="alexa-cookie-modal" role="dialog" aria-modal="true" aria-labelledby="alexa-cookie-title">
+  <div class="alexa-cookie-panel">
+    <h2 id="alexa-cookie-title">Cookie preferences</h2>
+    <p>Choose which optional categories Alexa Store may use. Essential storage is always active because it supports basic site functions.</p>
+    <div class="alexa-cookie-row">
+      <div><strong>Essential storage</strong><small>Required for basic website functions and saving your privacy choice.</small></div>
+      <input type="checkbox" checked disabled aria-label="Essential storage always active">
+    </div>
+    <div class="alexa-cookie-row">
+      <div><strong>Analytics</strong><small>Helps understand how visitors use the website so it can be improved.</small></div>
+      <input type="checkbox" id="alexa-cookie-analytics">
+    </div>
+    <div class="alexa-cookie-row">
+      <div><strong>Advertising</strong><small>Allows optional advertising storage and related measurement, if advertising is added.</small></div>
+      <input type="checkbox" id="alexa-cookie-advertising">
+    </div>
+    <div class="alexa-cookie-actions">
+      <button class="alexa-cookie-btn primary" type="button" id="alexa-cookie-save">Save My Choices</button>
+      <button class="alexa-cookie-btn" type="button" id="alexa-cookie-cancel">Cancel</button>
+    </div>
+    <p class="alexa-cookie-note">You can change your choices at any time using “Cookie Settings” at the bottom of the website.</p>
+  </div>
+</div>
+
+
+<script id="alexa-cookie-consent-script">
+(function(){
+  "use strict";
+  var KEY = "alexaStoreCookieConsent";
+  var banner = document.getElementById("alexa-cookie-banner");
+  var modal = document.getElementById("alexa-cookie-modal");
+  if (!banner || !modal) return;
+
+  var analyticsBox = document.getElementById("alexa-cookie-analytics");
+  var adsBox = document.getElementById("alexa-cookie-advertising");
+
+  function readChoice(){
+    try {
+      var saved = JSON.parse(localStorage.getItem(KEY) || "null");
+      if (!saved || saved.version !== 1) return null;
+      return {
+        necessary: true,
+        analytics: saved.analytics === true,
+        advertising: saved.advertising === true,
+        updatedAt: saved.updatedAt || null
+      };
+    } catch(e) { return null; }
+  }
+
+  function notify(choice){
+    window.dispatchEvent(new CustomEvent("alexa-consent-changed", {detail: choice}));
+  }
+
+  function saveChoice(analytics, advertising){
+    var choice = {
+      version: 1,
+      necessary: true,
+      analytics: !!analytics,
+      advertising: !!advertising,
+      updatedAt: new Date().toISOString()
+    };
+    try { localStorage.setItem(KEY, JSON.stringify(choice)); } catch(e) {}
+    banner.hidden = true;
+    modal.classList.remove("open");
+    notify(choice);
+  }
+
+  function openPreferences(){
+    var choice = readChoice() || {analytics:false, advertising:false};
+    analyticsBox.checked = choice.analytics;
+    adsBox.checked = choice.advertising;
+    modal.classList.add("open");
+  }
+
+  document.getElementById("alexa-cookie-accept").addEventListener("click", function(){
+    saveChoice(true, true);
+  });
+  document.getElementById("alexa-cookie-reject").addEventListener("click", function(){
+    saveChoice(false, false);
+  });
+  document.getElementById("alexa-cookie-manage").addEventListener("click", openPreferences);
+  document.getElementById("alexa-cookie-save").addEventListener("click", function(){
+    saveChoice(analyticsBox.checked, adsBox.checked);
+  });
+  document.getElementById("alexa-cookie-cancel").addEventListener("click", function(){
+    modal.classList.remove("open");
+  });
+  modal.addEventListener("click", function(event){
+    if(event.target === modal) modal.classList.remove("open");
+  });
+  document.addEventListener("keydown", function(event){
+    if(event.key === "Escape") modal.classList.remove("open");
+  });
+
+  window.AlexaConsent = {
+    getChoice: readChoice,
+    hasConsent: function(category){
+      if(category === "necessary") return true;
+      var choice = readChoice();
+      return !!(choice && choice[category] === true);
+    },
+    openSettings: openPreferences
+  };
+
+  var current = readChoice();
+  if (!current) banner.hidden = false;
+  else banner.hidden = true;
+  notify(current || {necessary:true, analytics:false, advertising:false});
+})();
+</script>
+
+</body>
+</html>

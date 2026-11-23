@@ -1,0 +1,868 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#050914">
+<title>Alexa Store Admin V9</title>
+
+<style>
+:root {
+  --blue:#078bff;
+  --cyan:#00d9ff;
+  --gold:#ffc928;
+  --bg:#050914;
+  --card:#101a2b;
+  --text:#f3f7ff;
+  --muted:#9aaac2;
+  --green:#21d18b;
+  --red:#ff5968;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  padding:16px;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,sans-serif;
+}
+header{
+  max-width:1000px;
+  margin:0 auto 20px;
+  padding:18px;
+  background:linear-gradient(120deg,#071b35,#10294b);
+  border:1px solid #174b7d;
+  border-radius:16px;
+}
+header h1{margin:0;color:var(--cyan)}
+header p{color:var(--muted);margin-bottom:0}
+main{max-width:1000px;margin:auto}
+.panel{
+  background:var(--card);
+  border:1px solid #1c304c;
+  border-radius:14px;
+  padding:16px;
+  margin-bottom:18px;
+}
+h2{font-size:19px;color:var(--cyan);margin-top:0}
+h3{font-size:16px;color:var(--gold)}
+label{
+  display:block;
+  color:var(--muted);
+  font-size:13px;
+  margin:12px 0 6px;
+}
+input,select,textarea{
+  width:100%;
+  padding:12px;
+  background:#07111f;
+  color:white;
+  border:1px solid #29405f;
+  border-radius:9px;
+  outline:none;
+}
+textarea{min-height:75px;resize:vertical}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--cyan);
+}
+button{
+  padding:11px 14px;
+  border:0;
+  border-radius:9px;
+  background:var(--blue);
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+  margin:5px 3px 5px 0;
+}
+button.secondary{background:#263a55}
+button.success{background:#087b55}
+button.danger{background:#a82e3b}
+button.gold{background:#a87908}
+button:disabled{opacity:.5}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(145px,1fr));
+  gap:10px;
+}
+.stat{
+  padding:15px;
+  background:#071323;
+  border:1px solid #1e3b5e;
+  border-radius:12px;
+}
+.stat small{color:var(--muted)}
+.stat strong{
+  display:block;
+  font-size:22px;
+  margin-top:8px;
+  color:var(--cyan);
+  overflow-wrap:anywhere;
+}
+.app,.record{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px;
+  background:#071323;
+  border:1px solid #203a59;
+  border-radius:12px;
+  margin:10px 0;
+  flex-wrap:wrap;
+}
+.app img{
+  width:55px;height:55px;
+  object-fit:cover;border-radius:12px;
+  background:#15253b;
+}
+.details{flex:1;min-width:140px}
+.details p{margin:5px 0;color:var(--muted);font-size:13px}
+.tag{
+  display:inline-block;
+  padding:4px 8px;
+  border-radius:20px;
+  background:#173858;
+  color:var(--cyan);
+  font-size:11px;
+}
+.status{font-weight:bold;font-size:12px}
+.pending{color:var(--gold)}
+.approved{color:var(--green)}
+.rejected{color:var(--red)}
+.preview{
+  width:80px;height:80px;
+  object-fit:cover;
+  border-radius:14px;
+  margin-top:10px;
+  background:#17283d;
+}
+hr{border:0;border-top:1px solid #263a55;margin:18px 0}
+.muted{color:var(--muted);font-size:13px;line-height:1.5}
+.warning{
+  padding:12px;
+  border-radius:9px;
+  background:#33280e;
+  color:#ffe09a;
+  font-size:13px;
+  line-height:1.5;
+}
+.empty{color:var(--muted);text-align:center;padding:18px}
+.actions{display:flex;flex-wrap:wrap;gap:5px}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Alexa Store Admin V9</h1>
+  <p>App management · Payment records · Earnings · Backups</p>
+</header>
+
+<main>
+
+<section class="panel">
+  <h2>📊 Financial overview</h2>
+  <div class="grid">
+    <div class="stat">
+      <small>Confirmed sales</small>
+      <strong id="salesTotal">0 FCFA</strong>
+    </div>
+    <div class="stat">
+      <small>Recorded ad earnings</small>
+      <strong id="adsTotal">0 FCFA</strong>
+    </div>
+    <div class="stat">
+      <small>Total recorded revenue</small>
+      <strong id="revenueTotal">0 FCFA</strong>
+    </div>
+    <div class="stat">
+      <small>Pending payments</small>
+      <strong id="pendingTotal">0 FCFA</strong>
+    </div>
+  </div>
+  <p class="muted">Only approved payment records count as confirmed sales. Ad earnings must be entered from real advertising-provider reports.</p>
+</section>
+  <section class="panel">
+  <h2>💰 Record advertising earnings</h2>
+  <p class="muted">Enter earnings from your actual ad network report. This form does not automatically connect to an ad provider.</p>
+
+  <label>Advertising provider</label>
+  <input id="adProvider" placeholder="Example: AdMob">
+
+  <label>Amount (FCFA)</label>
+  <input id="adAmount" type="number" min="1" placeholder="1000">
+
+  <label>Report date</label>
+  <input id="adDate" type="date">
+
+  <label>Reference or note</label>
+  <input id="adNote" placeholder="Optional report reference">
+
+  <button class="success" onclick="addAdEarning()">Save ad earnings</button>
+
+  <hr>
+  <h3>Advertising earnings history</h3>
+  <div id="adList"></div>
+</section>
+
+  <section class="panel">
+  <h2>📲 Payment records</h2>
+  <p class="muted">Record customer payments made through MTN MoMo or Orange Money. Use an order reference rather than storing private customer credentials.</p>
+
+  <label>Order reference</label>
+  <input id="orderRef" placeholder="Example: ORDER-001">
+
+  <label>App or product</label>
+  <input id="orderApp" placeholder="App name">
+
+  <label>Payment provider</label>
+  <select id="paymentProvider">
+    <option>MTN Mobile Money</option>
+    <option>Orange Money</option>
+    <option>Other</option>
+  </select>
+
+  <label>Amount (FCFA)</label>
+  <input id="paymentAmount" type="number" min="1" placeholder="500">
+
+  <label>Payment date</label>
+  <input id="paymentDate" type="date">
+
+  <button class="success" onclick="addPayment()">Add pending payment</button>
+
+  <hr>
+  <h3>Payment history</h3>
+  <div id="paymentList"></div>
+</section>
+  
+  <section class="panel">
+  <h2>💾 Backup and restore</h2>
+  <p class="muted">Download a backup of your apps, payment records and advertising records. Keep the file somewhere safe.</p>
+
+  <button onclick="exportBackup()">Download backup</button>
+
+  <label>Restore from a backup file</label>
+  <input id="restoreFile" type="file" accept=".json,application/json">
+  <button class="gold" onclick="restoreBackup()">Restore backup</button>
+
+  <p class="warning">
+    Restoring replaces the current app and financial records with the records in the selected backup. Only restore a backup you trust. Export your current data first.
+  </p>
+  </section>
+
+<section class="panel">
+  <h2>📱 App management</h2>
+
+  <form id="appForm">
+    <input type="hidden" id="editId">
+
+    <label>App name</label>
+    <input id="appName" required maxlength="80" placeholder="Example: Test Game">
+
+    <label>App icon image</label>
+    <input id="appIconFile" type="file" accept="image/png,image/jpeg,image/webp">
+    <p class="muted">Or use an image URL:</p>
+    <input id="appIconURL" type="url" placeholder="https://example.com/icon.png">
+    <img id="iconPreview" class="preview" alt="Icon preview" hidden>
+
+    <label>Category</label>
+    <select id="appCategory">
+      <option>Games</option>
+      <option>Messaging</option>
+      <option>Social</option>
+      <option>Music</option>
+      <option>Video</option>
+      <option>Education</option>
+      <option>Tools</option>
+      <option>Photography</option>
+      <option>Maps</option>
+      <option>Graphics</option>
+      <option>Other</option>
+      <option>Design</option>
+    </select>
+
+    <label>Description</label>
+    <textarea id="appDescription" required placeholder="Describe the app"></textarea>
+
+    <label>Version</label>
+    <input id="appVersion" placeholder="1.0">
+
+    <label>Size</label>
+    <input id="appSize" placeholder="25 MB">
+
+    <label>Developer</label>
+    <input id="appDeveloper" placeholder="Developer name">
+
+    <label>Features (separate with commas)</label>
+    <textarea id="appFeatures" placeholder="Offline, Multiplayer, Fast"></textarea>
+
+    <label>Screenshots (image URLs, one per line)</label>
+    <textarea id="appScreenshots" placeholder="https://example.com/screenshot1.png"></textarea>
+
+    <label>App type</label>
+    <select id="appType">
+      <option value="free">Free</option>
+      <option value="paid">Paid</option>
+    </select>
+
+    <label>Price (FCFA)</label>
+    <input id="appPrice" type="number" min="0" value="0">
+
+    <label>Google Play or official download URL</label>
+    <input id="appURL" type="url" placeholder="https://play.google.com/store/apps/details?id=...">
+
+    <label><input id="appTrending" type="checkbox" style="width:auto"> Trending</label>
+    <label><input id="appPremium" type="checkbox" style="width:auto"> Premium</label>
+
+
+    <button type="submit" id="saveAppBtn">Add app</button>
+    <button type="button" class="secondary" onclick="cancelEdit()">Cancel edit</button>
+  </form>
+</section>
+
+<section class="panel">
+  <h2>🗂️ Manage apps</h2>
+  <div id="appList"></div>
+</section>
+
+  
+
+<section class="panel">
+  <h2>ℹ️ Important information</h2>
+  <p class="muted">
+    This admin page stores records in this browser's local storage. It does not automatically verify MTN or Orange transactions, send payments, or deliver downloads. A responsible guardian should verify real transactions through the official provider account before approving them. Never enter or store payment PINs, OTPs or passwords here.
+  </p>
+</section>
+
+</main>
+
+<script>
+/* KEEP THIS KEY: it preserves your existing Alexa Store app database. */
+const STORAGE_KEY = "alexaAdminApps";
+const AD_KEY = "alexaAdEarningsV9";
+const PAYMENT_KEY = "alexaPaymentsV9";
+
+let apps = readArray(STORAGE_KEY);
+let adRecords = readArray(AD_KEY);
+let payments = readArray(PAYMENT_KEY);
+let selectedIcon = "";
+
+function readArray(key){
+  try{
+    const value = JSON.parse(localStorage.getItem(key) || "[]");
+    return Array.isArray(value) ? value : [];
+  }catch(e){
+    return [];
+  }
+}
+
+function saveApps(){
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(apps));
+}
+function saveAds(){
+  localStorage.setItem(AD_KEY,JSON.stringify(adRecords));
+}
+function savePayments(){
+  localStorage.setItem(PAYMENT_KEY,JSON.stringify(payments));
+}
+function makeId(){
+  return Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+}
+function money(value){
+  return Number(value || 0).toLocaleString("en-US")+" FCFA";
+}
+function el(id){
+  return document.getElementById(id);
+}
+function safeDate(value){
+  return value || new Date().toISOString().slice(0,10);
+}
+function setText(id,value){
+  el(id).textContent = value;
+}
+
+/* ICON PREVIEW */
+el("appIconFile").addEventListener("change",function(){
+  const file=this.files[0];
+  if(!file)return;
+
+  if(!["image/png","image/jpeg","image/webp"].includes(file.type)){
+    alert("Please select a PNG, JPG or WebP image.");
+    this.value="";
+    return;
+  }
+  if(file.size > 700000){
+    alert("Please choose an icon smaller than 700 KB.");
+    this.value="";
+    return;
+  }
+
+  const reader=new FileReader();
+  reader.onload=()=>{
+    selectedIcon=reader.result;
+    el("appIconURL").value="";
+    showPreview(selectedIcon);
+  };
+  reader.readAsDataURL(file);
+});
+
+el("appIconURL").addEventListener("input",function(){
+  if(this.value.trim()){
+    selectedIcon=this.value.trim();
+    showPreview(selectedIcon);
+  }
+});
+
+function showPreview(src){
+  const img=el("iconPreview");
+  img.src=src;
+  img.hidden=false;
+}
+function resetPreview(){
+  selectedIcon="";
+  el("appIconFile").value="";
+  el("appIconURL").value="";
+  el("iconPreview").removeAttribute("src");
+  el("iconPreview").hidden=true;
+}
+
+/* APP MANAGEMENT */
+el("appForm").addEventListener("submit",function(event){
+  event.preventDefault();
+
+  const name=el("appName").value.trim();
+  const description=el("appDescription").value.trim();
+  const price=Number(el("appPrice").value || 0);
+  const url=el("appURL").value.trim();
+
+  if(!name || !description){
+    alert("Enter the app name and description.");
+    return;
+  }
+  if(price<0 || !Number.isFinite(price)){
+    alert("Enter a valid price.");
+    return;
+  }
+  if(url && !validHTTPS(url)){
+    alert("The download URL must start with HTTPS.");
+    return;
+  }
+
+  const oldId=el("editId").value;
+  const oldApp=apps.find(a=>String(a.id)===oldId);
+
+  const icon=selectedIcon ||
+    (oldApp && oldApp.icon) ||
+    "https://placehold.co/120x120/10233d/00d9ff?text=App";
+
+  const app={
+    id:oldId || makeId(),
+    name,
+    icon,
+    category:el("appCategory").value,
+    description,
+    version:el("appVersion").value.trim(),
+    size:el("appSize").value.trim(),
+    developer:el("appDeveloper").value.trim(),
+    features:el("appFeatures").value.split(",").map(x=>x.trim()).filter(Boolean),
+    screenshots:el("appScreenshots").value.split("\n").map(x=>x.trim()).filter(x=>validHTTPS(x)),
+    type:el("appType").value,
+    price,
+    url,
+    playUrl:url,
+    googlePlayUrl:url,
+    trending:el("appTrending").checked,
+    premium:el("appPremium").checked,
+    updatedAt:new Date().toISOString()
+  };
+
+  if(oldId){
+    const index=apps.findIndex(a=>String(a.id)===oldId);
+    if(index!==-1)apps[index]=app;
+    else apps.push(app);
+  }else{
+    apps.push(app);
+  }
+
+  saveApps();
+  cancelEdit();
+  renderApps();
+  alert(oldId ? "App updated." : "App added.");
+});
+
+function validHTTPS(value){
+  try{
+    return new URL(value).protocol==="https:";
+  }catch(e){
+    return false;
+  }
+}
+
+function cancelEdit(){
+  el("appForm").reset();
+  el("editId").value="";
+  el("appPrice").value="0";
+  el("saveAppBtn").textContent="Add app";
+  resetPreview();
+}
+
+function editApp(id){
+  const a=apps.find(x=>String(x.id)===String(id));
+  if(!a)return;
+
+  el("editId").value=a.id;
+  el("appName").value=a.name || "";
+  el("appCategory").value=a.category || "Other";
+  el("appDescription").value=a.description || "";
+  el("appVersion").value=a.version || "";
+  el("appSize").value=a.size || "";
+  el("appDeveloper").value=a.developer || "";
+  el("appFeatures").value=Array.isArray(a.features)?a.features.join(", "):(a.features || "");
+  el("appScreenshots").value=Array.isArray(a.screenshots)?a.screenshots.join("\n"):"";
+  el("appType").value=a.type || "free";
+  el("appPrice").value=a.price || 0;
+  el("appURL").value=a.url || a.playUrl || a.googlePlayUrl || "";
+  el("appTrending").checked=!!a.trending;
+  el("appPremium").checked=!!a.premium;
+
+  selectedIcon=a.icon || "";
+  if(selectedIcon)showPreview(selectedIcon);
+
+  el("saveAppBtn").textContent="Update app";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function deleteApp(id){
+  if(!confirm("Delete this app from Alexa Store?"))return;
+  apps=apps.filter(a=>String(a.id)!==String(id));
+  saveApps();
+  renderApps();
+}
+
+function renderApps(){
+  const list=el("appList");
+  list.replaceChildren();
+
+  if(!apps.length){
+    list.textContent="No apps added yet.";
+    list.className="empty";
+    return;
+  }
+  list.className="";
+
+  apps.forEach(a=>{
+    const row=document.createElement("div");
+    row.className="app";
+
+    const img=document.createElement("img");
+    img.src=a.icon || "";
+    img.alt="";
+    img.onerror=()=>{img.src="https://placehold.co/100x100/10233d/00d9ff?text=App";};
+
+    const details=document.createElement("div");
+    details.className="details";
+
+    const title=document.createElement("strong");
+    title.textContent=a.name || "Unnamed app";
+
+    const info=document.createElement("p");
+    info.textContent=(a.category || "Other")+" · "+(a.type || "free")+" · "+money(a.price);
+
+    const badge=document.createElement("span");
+    badge.className="tag";
+    badge.textContent=a.trending?"Trending":(a.premium?"Premium":"Listed");
+
+    details.append(title,info,badge);
+
+    const actions=document.createElement("div");
+    actions.className="actions";
+
+    const edit=document.createElement("button");
+    edit.textContent="Edit";
+    edit.onclick=()=>editApp(a.id);
+
+    const del=document.createElement("button");
+    del.textContent="Delete";
+    del.className="danger";
+    del.onclick=()=>deleteApp(a.id);
+
+    actions.append(edit,del);
+    row.append(img,details,actions);
+    list.append(row);
+  });
+}
+
+/* AD EARNINGS */
+function addAdEarning(){
+  const provider=el("adProvider").value.trim();
+  const amount=Number(el("adAmount").value);
+  const date=el("adDate").value || safeDate();
+  const note=el("adNote").value.trim();
+
+  if(!provider || !Number.isFinite(amount) || amount<=0){
+    alert("Enter a provider and a valid amount.");
+    return;
+  }
+
+  adRecords.push({
+    id:makeId(),
+    provider,
+    amount,
+    date,
+    note,
+    createdAt:new Date().toISOString()
+  });
+
+  saveAds();
+  el("adProvider").value="";
+  el("adAmount").value="";
+  el("adDate").value="";
+  el("adNote").value="";
+  renderFinancials();
+}
+
+function deleteAd(id){
+  if(!confirm("Delete this advertising record?"))return;
+  adRecords=adRecords.filter(x=>x.id!==id);
+  saveAds();
+  renderFinancials();
+}
+
+/* PAYMENT RECORDS */
+function addPayment(){
+  const reference=el("orderRef").value.trim();
+  const app=el("orderApp").value.trim();
+  const provider=el("paymentProvider").value;
+  const amount=Number(el("paymentAmount").value);
+  const date=el("paymentDate").value || safeDate();
+
+  if(!reference || !app || !Number.isFinite(amount) || amount<=0){
+    alert("Enter an order reference, product and valid amount.");
+    return;
+  }
+
+  if(payments.some(p=>p.reference===reference)){
+    alert("That order reference already exists.");
+    return;
+  }
+
+  payments.push({
+    id:makeId(),
+    reference,
+    app,
+    provider,
+    amount,
+    date,
+    status:"Pending",
+    createdAt:new Date().toISOString()
+  });
+
+  savePayments();
+  el("orderRef").value="";
+  el("orderApp").value="";
+  el("paymentAmount").value="";
+  el("paymentDate").value="";
+  renderFinancials();
+}
+
+function changePayment(id,status){
+  const payment=payments.find(p=>p.id===id);
+  if(!payment || payment.status!=="Pending")return;
+
+  if(status==="Approved"){
+    if(!confirm("Has the responsible guardian verified this payment through the official provider account?"))return;
+  }else{
+    if(!confirm("Reject this payment record?"))return;
+  }
+
+  payment.status=status;
+  payment.updatedAt=new Date().toISOString();
+  savePayments();
+  renderFinancials();
+}
+
+function deletePayment(id){
+  if(!confirm("Permanently delete this payment record?"))return;
+  payments=payments.filter(p=>p.id!==id);
+  savePayments();
+  renderFinancials();
+}
+
+function renderFinancials(){
+  const approved=payments.filter(p=>p.status==="Approved")
+    .reduce((sum,p)=>sum+Number(p.amount || 0),0);
+
+  const pending=payments.filter(p=>p.status==="Pending")
+    .reduce((sum,p)=>sum+Number(p.amount || 0),0);
+
+  const adTotal=adRecords.reduce((sum,a)=>sum+Number(a.amount || 0),0);
+
+  setText("salesTotal",money(approved));
+  setText("adsTotal",money(adTotal));
+  setText("revenueTotal",money(approved+adTotal));
+  setText("pendingTotal",money(pending));
+
+  renderAdList();
+  renderPaymentList();
+}
+
+function renderAdList(){
+  const list=el("adList");
+  list.replaceChildren();
+
+  if(!adRecords.length){
+    list.textContent="No advertising earnings recorded.";
+    list.className="empty";
+    return;
+  }
+  list.className="";
+
+  [...adRecords].reverse().forEach(a=>{
+    const row=document.createElement("div");
+    row.className="record";
+
+    const details=document.createElement("div");
+    details.className="details";
+
+    const title=document.createElement("strong");
+    title.textContent=a.provider;
+
+    const info=document.createElement("p");
+    info.textContent=money(a.amount)+" · "+a.date+(a.note?" · "+a.note:"");
+
+    const del=document.createElement("button");
+    del.textContent="Delete";
+    del.className="danger";
+    del.onclick=()=>deleteAd(a.id);
+
+    details.append(title,info);
+    row.append(details,del);
+    list.append(row);
+  });
+}
+
+function renderPaymentList(){
+  const list=el("paymentList");
+  list.replaceChildren();
+
+  if(!payments.length){
+    list.textContent="No payment records yet.";
+    list.className="empty";
+    return;
+  }
+  list.className="";
+
+  [...payments].reverse().forEach(p=>{
+    const row=document.createElement("div");
+    row.className="record";
+
+    const details=document.createElement("div");
+    details.className="details";
+
+    const title=document.createElement("strong");
+    title.textContent=p.app+" · "+money(p.amount);
+
+    const info=document.createElement("p");
+    info.textContent="Order: "+p.reference+" · "+p.provider+" · "+p.date;
+
+    const status=document.createElement("span");
+    status.className="status "+p.status.toLowerCase();
+    status.textContent=p.status;
+
+    details.append(title,info,status);
+    row.append(details);
+
+    const actions=document.createElement("div");
+    actions.className="actions";
+
+    if(p.status==="Pending"){
+      const approve=document.createElement("button");
+      approve.textContent="Approve";
+      approve.className="success";
+      approve.onclick=()=>changePayment(p.id,"Approved");
+
+      const reject=document.createElement("button");
+      reject.textContent="Reject";
+      reject.className="danger";
+      reject.onclick=()=>changePayment(p.id,"Rejected");
+
+      actions.append(approve,reject);
+    }
+
+    const del=document.createElement("button");
+    del.textContent="Delete";
+    del.className="secondary";
+    del.onclick=()=>deletePayment(p.id);
+
+    actions.append(del);
+    row.append(actions);
+    list.append(row);
+  });
+}
+/* BACKUP */
+function exportBackup(){
+  const backup={
+    format:"AlexaStoreBackup",
+    version:9,
+    exportedAt:new Date().toISOString(),
+    apps,
+    adRecords,
+    payments
+  };
+
+  const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement("a");
+  link.href=url;
+  link.download="AlexaStore-Backup.json";
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+function restoreBackup(){
+  const file=el("restoreFile").files[0];
+  if(!file){
+    alert("Choose a backup JSON file first.");
+    return;
+  }
+
+  if(!confirm("This will replace your current apps and financial records. Have you downloaded a backup of your current data?"))return;
+
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const data=JSON.parse(reader.result);
+
+      if(data.format!=="AlexaStoreBackup" ||
+         !Array.isArray(data.apps) ||
+         !Array.isArray(data.adRecords) ||
+         !Array.isArray(data.payments)){
+        throw new Error("Invalid backup");
+      }
+
+      apps=data.apps;
+      adRecords=data.adRecords;
+      payments=data.payments;
+
+      saveApps();
+      saveAds();
+      savePayments();
+
+      renderApps();
+      renderFinancials();
+
+      alert("Backup restored successfully.");
+    }catch(e){
+      alert("This backup file is invalid or damaged. No records were restored.");
+    }
+  };
+  reader.readAsText(file);
+}
+/* STARTUP */
+renderApps();
+renderFinancials();
+</script>
+
+</body>
+</html>
